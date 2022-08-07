@@ -1,0 +1,239 @@
+\documentclass[10pt]{beamer}
+\usepackage[UTF8]{ctex}
+\usepackage{outlines}
+\usepackage{hyperref}
+\usepackage{minted}
+\usepackage{booktabs}
+\usemintedstyle{xcode}
+\usepackage{tcolorbox}
+\tcbuselibrary{minted}
+
+\setminted{
+    fontfamily=helvetica
+}
+\AtBeginSection[]{
+  \begin{frame}
+  \tableofcontents[currentsection, hideothersubsections]
+  \end{frame}
+}
+
+\ifx\pdfoutput\undefined
+% we are running LaTeX, not pdflatex
+\usepackage{graphicx}
+\else
+% we are running pdflatex, so convert .eps files to .pdf
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\fi
+
+\input{beihangbeamerstyle/beihangcolor}
+\input{beihangbeamerstyle/beihangbeamerstyle}
+
+\title{Python入门（四）}
+\author{张博涵\\
+北京航空航天大学经济管理学院 (\texttt{zhangbohan@buaa.edu.cn})}
+\date{\today}
+
+
+\begin{document}
+
+\begin{frame}
+    \maketitle
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Contents}
+
+    \tableofcontents
+
+\end{frame}
+
+
+\section{函数参数}
+
+\begin{frame}
+    \frametitle{函数参数}
+
+    \begin{block}{函数参数}
+        \begin{itemize}
+            \item 函数可以具有多个参数
+            \item 当调用函数时，按照顺序将输入值赋值给函数的局部变量。
+        \end{itemize}
+    \end{block}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{函数的默认参数与函数调用规则}
+
+    \begin{outline}
+        \1 可以为一个或多个参数指定默认值
+        \1 在定义函数时，具有默认值的参数必须放在不具有默认值的参数的后面。
+        \1 调用函数具有以下三种规则
+            \2 所有参数按照顺序调用法，这些参数称为位置参数(positional argument)
+            \2 所有参数以\mintinline{python}{arg=value}的形式传入函数，顺序不固定，这些参数称为关键词参数(keyword argument)
+            \2 位置与\mintinline{python}{arg=value}混合方式，假设有$n$个参数
+
+            传入的位置参数必须按照顺序，放在前面（即函数的前$k$个局部变量一一对应前$k$个传入的变量）
+
+            后面的$n-k$个以\mintinline{python}{arg=value}调用的参数，不要求顺序
+        \1 在调用函数时，没有默认值的参数必须传入，有默认值的参数可选。
+        \1 函数定义中的默认值可以是一个变量或表达式，当函数创建时，默认值会在函数定义的空间内求值，并且不再更改，并且在整个存在的范围内指向同一片地址空间，特别是在默认值为可变对象时要尤其注意。一般情况下默认值为不可变对象。
+    \end{outline}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{可变参数：*args 以及 **args}
+
+    \begin{block}{在函数定义中使用*args以及**args}
+     \begin{itemize}
+        \item \mintinline{python}{*args}以及\mintinline{python}{**args}可以作为函数的单独的参数，和普通的命名参数混合使用，\mintinline{python}{*args}必须放在前面。
+        \item \mintinline{python}{*args}代表位置参数，\mintinline{python}{**args}代表关键词参数
+        \item \mintinline{python}{*args}将传入函数的除一一对应以外的所有位置参数放入一个元组中
+        \item \mintinline{python}{**args}将传入函数的除一一对应以外的所有关键词参数放入一个字典中。
+        \item 在函数调用时，处于\mintinline{python}{*args}之后的所有参数均必须以关键词参数的形式传入，处于\mintinline{python}{*args}及其之前的参数必须以位置参数的方式传入。
+     \end{itemize}
+    \end{block}
+    
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{可变参数：*args 以及 **args}
+
+    \begin{block}{在调用函数时使用*args以及**args}
+        \begin{itemize}
+            \item 在调用函数时，可以用\mintinline{python}{*args}将一个可迭代对象传入到函数
+            \item 也可以用\mintinline{python}{**args}将一个字典传入到函数中
+        \end{itemize}
+    \end{block}
+    
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{匿名函数：lambda}
+
+    有时候需要临时写一个非常简单的函数，此时去声明一个函数显得复杂冗长，这时候使用匿名函数可以使代码更简洁，速度也可能更快。
+
+    \begin{tcblisting}{listing only, title = Syntax, minted language=python}
+lambda arg1,arg2 : expr\end{tcblisting}
+
+\begin{itemize}
+    \item 匿名函数没有名字，也没有return，表达式的值即为返回值
+    \item 表达式一般只有一句话
+    \item 也可以将lambda语句赋值给变量，则该变量称为函数
+    \item 经典场景：\mintinline{python}{map}
+\end{itemize}
+\end{frame}
+
+
+
+\section{函数作用域}
+
+\begin{frame}
+    \frametitle{函数变量作用域}
+
+    \begin{itemize}
+        \item 当变量被传入函数时，开辟了一片新的内存空间用于存储局部变量，对于不可变变量如字符串、数字等，函数调用时将值复制给了局部变量，对于可变变量如列表等将值的内存地址传递给局部变量
+        \item 在函数内部对可变变量进行更改，函数外部对应的值也会改变
+        \item 在函数中遇到变量时，会首先在当前的函数寻找该变量，若寻找不到，则会在它的父空间中进行寻找，层层寻找一直到找到该变量。
+        \item 在函数内部可以访问到函数外部的变量，且可以外部的可变对象进行操作，因此在使用时需要格外注意。
+        \item 当函数外部的变量无法访问到函数的局部变量
+    \end{itemize}
+
+\end{frame}
+
+
+\section{模块/module 以及 包/Package}
+\begin{frame}[fragile]
+    \frametitle{模块/module 以及 包/Package}
+
+
+    \begin{itemize}
+        \item 模块是对一部分具有特定功能的多个Python函数、类、对象、变量等进行组合封装，以组成一个独特的空间，在一些语言中也被称为namespace，一般一个Python文件就是一个模块，模块的名字为文件名。
+        \item 包通常包含一个或多个子模块。
+        \item 在编程时，通常需要安装和使用别人写好的Package。
+    \end{itemize}
+
+    \begin{block}{Package 安装}
+
+        使用\mintinline{python}{pip}安装特定的Package，它会从pypi或其镜像站点上下载安装包并在电脑上安装，镜像站点例如\href{https://mirrors.tuna.tsinghua.edu.cn/help/pypi/}{清华镜像站}
+    
+    通常可以安装多个Python版本，每个版本都有对应的pip，pip安装的Package会放在该版本的安装路径中。
+
+    \begin{tcblisting}{listing only, minted language=shell, notitle}
+        pip install requests
+        pip install -i https://pypi.tuna.tsinghua.edu.cn/simple some-package\end{tcblisting}
+        
+    \end{block}
+
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{导入模块}
+    \begin{itemize}
+        \item 使用\mintinline{python}{import packagename}导入模块，然后使用\mintinline{python}{packagename.func_name}使用来自模块中的函数或其他对象。
+        \item 使用\mintinline{python}{from packagename import object_name}，然后直接使用\mintinline{python}{object_name}。
+        \item 使用\mintinline{python}{as}进行重命名以避免命名冲突。
+        \item \mintinline{python}{from packagename import *}导入所有的对象
+        \item 使用\mintinline{python}{import foo.bar}导入子模块
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Python标准库}
+
+    Python提供了丰富的标准库，不需要安装直接导入，包含了丰富的功能，例如
+    \begin{itemize}
+        \item \mintinline{python}{sys}包含Python本身的基本信息
+        \item \mintinline{python}{os}可以与操作系统、文件系统进行交互
+        \item \mintinline{python}{math}提供了一些数学计算的函数
+        \item \mintinline{python}{time}提供了一些时间相关的操作
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{作为脚本执行}
+
+    Python的文件既可以作为脚本执行，也可以作为模块被其他文件引入，为了避免在被当做模块引入时引入不必要的变量，可以使用如下方法：
+
+    \begin{tcblisting}{listing only, minted language=python, notitle}
+        if __name__ == "__main__":
+            # 脚本代码\end{tcblisting}
+
+    \begin{itemize}
+        \item \mintinline{python}{__name__}为Python的一个隐藏变量，当作为脚本执行时，为\mintinline{python}{__main__}，当作为module被引入时，为文件的名字
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{作业}
+
+    写一个函数：可以列出当前目录（默认值），或者指定文件目录下的所有后缀为.py的文件，并输出给用户，当目录不存在时输出警告信息例如
+
+    \begin{tcblisting}{listing only, minted language=python, notitle}
+>>> find_py()
+fibo.py
+>>> find_py(".")
+fibo.py
+>>> find_py("./files")
+./files does not exist.\end{tcblisting}
+
+\begin{block}{提示}
+    \begin{itemize}
+        \item 标准库的os包可以与操作系统进行交互，例如列举出某个文件目录下的文件，判断文件或目录是否存在等
+        \item \mintinline{python}{str.endswith(pattern)}方法可以判断字符串后缀是否为\mintinline{python}{pattern}
+    \end{itemize}
+\end{block}
+\end{frame}
+
+
+
+\end{document}

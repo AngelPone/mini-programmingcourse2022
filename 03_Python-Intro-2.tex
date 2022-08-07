@@ -1,0 +1,218 @@
+\documentclass[10pt]{beamer}
+\usepackage[UTF8]{ctex}
+\usepackage{outlines}
+\usepackage{hyperref}
+\usepackage{minted}
+\usepackage{booktabs}
+\usemintedstyle{xcode}
+\setminted{
+    fontfamily=helvetica
+}
+\AtBeginSection[]{
+  \begin{frame}
+  \tableofcontents[currentsection, hideothersubsections]
+  \end{frame}
+}
+\ifx\pdfoutput\undefined
+% we are running LaTeX, not pdflatex
+\usepackage{graphicx}
+\else
+% we are running pdflatex, so convert .eps files to .pdf
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\fi
+
+\input{beihangbeamerstyle/beihangcolor}
+\input{beihangbeamerstyle/beihangbeamerstyle}
+
+\title{Python入门（二）}
+\author{张博涵\\
+北京航空航天大学经济管理学院 (\texttt{zhangbohan@buaa.edu.cn})}
+\date{\today}
+
+
+\begin{document}
+\begin{frame}
+\maketitle
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Contents}
+    \tableofcontents
+\end{frame}
+
+\section{复杂数据类型}
+\begin{frame}
+    \frametitle{列表 - list}
+
+    \begin{block}{关于内存地址}
+        \begin{itemize}
+            \item 内存地址是一串二进制代码，一般用16进制数来表示: \mintinline{python}{id(var)}
+            \item 内存地址表示Python中某个变量指向的数据在内存的位置，CPU通过该地址去访问或修改数据。
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{列表}
+        \begin{itemize}
+            \item 列表是数据的最简单的容器形式，可以把多个不同类型的变量或数据放在一起，按顺序进行排列和索引，字符串可以看作为列表的一个特殊形式。
+            \item 列表通过\mintinline{python}{[]}进行创建，用整数进行索引，索引从0开始
+            \item 列表的内容可替换，而字符串不行。
+            \item 列表存储了其中所有元素的内存地址，因此列表的实际内容可能随着元素的变化而变化。
+    \end{itemize}
+    \end{block}
+
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{列表 - list}
+
+    \begin{table}
+    \caption{列表的部分基础操作}    
+    \begin{tabular}{ll}
+    \toprule
+    方法 & 含义 \\ \midrule
+    \mintinline{python}{lst.append()} & 在末尾插入 \\
+    \mintinline{python}{lst.insert()} & 在指定位置插入 \\
+    \mintinline{python}{lst.remove()} & 移除第一次出现的指定值 \\
+    \mintinline{python}{len(lst)} & 列表的长度 \\
+    \mintinline{python}{lst.reverse()} & 翻转 \\
+    \mintinline{python}{lst.pop()} & 移除最后一个 \\
+    \mintinline{python}{lst.clear()} & 清空 \\
+    \mintinline{python}{lst + lst} & 列表连接 \\
+    \mintinline{python}{lst * 2} & 列表重复 \\
+    \bottomrule
+    \end{tabular}
+    \end{table}    
+
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{元组 - tuple}
+
+    元组与列表类似，主要区别如下：
+    \begin{itemize}
+        \item 用\mintinline{python}{()}创建
+        \item 空元组与一个元素的元组：\mintinline{python}{()}, \mintinline{python}{(value,)}
+        \item 长度不可变，值不可变
+        \item 没有\mintinline{python}{pop}, \mintinline{python}{delete}等方法
+        \item 支持\mintinline{python}{+}, \mintinline{python}{*}
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+    \frametitle{集合 - set}
+
+    \begin{itemize}
+        \item 没有重复值的容器，用\mintinline{python}{{}}创建，也可以使用\mintinline{python}{set}函数将可迭代的对象转化成set.
+        \item 不支持用整数进行索引
+        \item 集合运算
+    \end{itemize}
+
+    \begin{table}
+        \caption{集合运算}
+        \begin{tabular}{ll}
+            \toprule
+            方法 & 含义 \\
+            \midrule
+            | & 并集 \\
+            \& & 交集 \\
+            a \textasciicircum b = (a|b) - (a\&b) & a 和 b 中不同时存在的元素 \\ 
+            a - b & 存在于a不存在与b中的元素
+        \end{tabular}
+    \end{table}
+
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{集合 - set}
+
+    \begin{table}
+    \caption{集合常用方法}
+    \begin{tabular}{ll} \toprule
+    方法 & 含义 \\
+    \mintinline{python}{.add} & 增加元素 \\
+    \mintinline{python}{.discard} & 删除元素 \\
+    \mintinline{python}{.pop} & 随意丢弃一个元素 \\
+    \mintinline{python}{.remove} & 丢弃一个指定元素，空时报错 \\
+    \mintinline{python}{.issubset} & 是否是另一个集合的子集 \\
+    \mintinline{python}{.superset} & 是否是另一个集合的超集 \\ \bottomrule
+    \end{tabular}
+    \end{table}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{字典 - dict}
+
+    \begin{itemize}
+        \item 存储多个键值对，key:value，也可以使用\mintinline{python}{dict()}函数创建
+        \item 无序的映射类型，使用key进行索引: \mintinline{python}{mydict[key]}
+        \item 使用\mintinline{python}{{key1:value1, key2:value2}}创建
+        \item key不可更改，不可重复，值可以更改。
+        \item value可以是任意类型，key的类型必须hashable，一般是不可变的对象，例如元组，字符串，数
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{字典 - dict}
+
+    \begin{table}
+    \begin{tabular}{lcc} \toprule
+        方法 & 含义 \\ \midrule
+        \mintinline{python}{.keys()} & 列出所有的key \\
+        \mintinline{python}{.values()} & 列出所有的value \\
+        \mintinline{python}{.items()} & 列出所有的key:value，可迭代 \\
+        \mintinline{python}{.pop()} & 删除key以及对应的value \\
+        \mintinline{python}{.update()} & 使用另一个字典进行更新 \\ \bottomrule
+    \end{tabular}
+    \end{table}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{可迭代对象 - Iterable}
+    \begin{outline}
+        \1 可迭代对象是一种不同数据类型或数据结构遵守的“规范”，主要用于循环。
+        \1 主要需要具有这样的功能
+            \2 具有一定的顺序
+            \2 可以获取第一个，然后获取下一个
+        \1 之前讲的list、tuple、set、dict\_keys等可以称为可迭代对象。
+        \1 从技术上将，在Python中，所有实现了\mintinline{python}{__iter__()}的方法的对象都是可迭代对象。
+    \end{outline}
+
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{类型转换}
+
+    一般来说，可以使用类型的构造器将其他类型转换成对应的类型，例如 \mintinline{python}{int()}, \mintinline{python}{float()}, \mintinline{python}{str()}, \mintinline{python}{dict()}, \mintinline{python}{list()}。
+
+    \begin{itemize}
+        \item 将对象转成\mintinline{python}{list()},\mintinline{python}{tuple()}要求输入必须为可迭代对象
+        \item 由于部分对象如dict\_keys、set本身是无序的，因此转换成list或进行迭代输出时顺序不确定
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{查找文档与帮助}
+    不清楚函数的用法时
+    \begin{enumerate}
+        \item 使用\mintinline{python}{help(func)}
+        \item 在交互式环境中使用\mintinline{python}{?}
+        \item 在VSCode或Jupyter环境中使用按\mintinline{shell}{tab}可以给出方法提示
+        \item 查找Python文档：\href{https://www.python.org/doc/}{官方文档}, \href{https://docs.python.org/3/library/index.html}{Python标准库文档}
+        \item bing搜索
+    \end{enumerate}
+
+\end{frame}
+
+\end{document}
