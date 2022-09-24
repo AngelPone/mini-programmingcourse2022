@@ -1,0 +1,230 @@
+\documentclass[9pt]{beamer}
+\usepackage[UTF8]{ctex}
+
+\input{bohanbeamerstyle/bohanbeamerstyle}
+
+\title{Python入门（六）}
+\author{张博涵}
+\institute{北京航空航天大学}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}[plain]
+\maketitle
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Contents}
+
+    \tableofcontents
+
+\end{frame}
+
+\section{I/O}
+\begin{frame}
+    \frametitle{I/O Stream}
+
+    在计算机系统中，不同程序之间、程序与系统之间以数据流(Stream)的形式传输数据，也可以称为 I/O Stream，I 代表 Input，O代表Output。
+
+    \vspace{5mm}
+
+    流一般有如下几种途径：
+
+    \begin{outline}
+        \1 标准流：标准输入(stdin)、标准输出(stdout)、标准错误(stderr)
+        \2 在默认情况下，标准输入流为键盘，标准输出流和错误流为显示器（Shell），Python中通过\mintinline{python}{print}函数打印的内容传入标准输出，\mintinline{python}{input}函数会读取标准输入，报错信息传入标准错误流。
+        \2 在Python中，Shell中均可以通过重定向(redirection)将输入流、输出流、错误流定向到文件
+        \1 文件流：读取文件内容、向文件写入
+    \end{outline}
+
+    \vspace{5mm}
+
+    流具有如下两种类型：
+
+    \begin{itemize}
+        \item 文本流：内容是字符串，Python会自动进行编码、解码、转义等，文本流本身有不同的编码方式（字符串章节提过）如UTF-8、GBK、GB2312。
+        \item 二进制流：内容是二进制代码，不进行编码解码。
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{文件读取/写入}
+
+    在Python中进行文件的读取和写入需要首先和文件建立连接，创建一个指向目标的I/O Stream，然后执行读/写操作。
+
+    \begin{block}{读写文件}
+        \begin{itemize}
+            \item 可以使用\mintinline{python}{open}函数来连接某个文件，主要用法
+            
+            \begin{codebox}{Python}{open}
+open(file_path, mode='r', encoding=None)\end{codebox}
+
+            \item 这里仅列出部分常用参数，其他参数可以查找文档
+            \item \mintinline{python}{file_path} 为文件路径
+            \item \mintinline{python}{mode}为读写模式，可选包括\mintinline{python}{r, w, a, rb, wb, ab}六种
+            \item \mintinline{python}{b}代表二进制流，在读写图像、视频等非文本类数据时常用，\mintinline{Python}{r, w, a}分别代表read(读取), write(写入), append(追加)，write和append的区别在于前者会删除文件现有的内容再写入，而后者在文件的末尾写入。
+            \item \mintinline{python}{encoding}代表当流为文本流时的编码方式，默认为UTF-8。
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{文件读取/写入}
+\begin{codebox}{Python}{示例代码}
+f = open('test.txt', 'w', encoding='UTF-8')
+f.write('你好, test.txt!\n')
+f.write('Hello again, test.txt!\n')
+f.close()
+
+f = open('test.txt', 'r', encoding='UTF-8')
+contents = f.read()
+print(contents)
+f.close()
+\end{codebox}
+
+\begin{itemize}
+    \item \mintinline{python}{open}函数返回一个文件对象，可以看做和文件的I/O接口
+    \item 在写入模式下，可以通过\mintinline{python}{f.write()}像文件中写入数据
+    \item 在读取模式下，可以通过\mintinline{python}{f.read()}读取全部文件内容，也可以通过\mintinline{python}{f.readlines(), f.readline()}等方法分行读取或逐行读取。
+    \item 在流使用完毕后，应该借助\mintinline{python}{f.close()}方法关闭该连接，以免错误写入。
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{文件读取/写入}
+\begin{codebox}{Python}{示例代码}
+with open("test.txt", 'r') as f:
+    contents = f.read()
+print(contents)
+\end{codebox}
+
+\begin{itemize}
+    \item 为了方便，避免忘记关闭连接，Python提供了\mintinline{python}{with ... as ...} 特殊语法。
+    \item 可以在\mintinline{python}{with ... as ...}代码块内执行读取或写入的操作，当离开该代码块时，连接会被自动关闭。
+    \item 不止是在文件读写方面，该代码块也在其他地方被使用。
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{字符串格式化}
+
+    在Python中字符串的格式化方法主要有：
+
+    \begin{itemize}
+        \item f-string
+        \item \mintinline{python}{'str{},{}'.format()}方法
+        \item 其他常用函数
+    \end{itemize}
+
+\vspace{5mm}
+
+    参考链接：
+
+    \url{https://docs.python.org/3/tutorial/inputoutput.html}
+
+\end{frame}
+
+
+\section{错误处理: error handling}
+
+
+\begin{frame}
+    \frametitle{错误: Error}
+
+    由于编程问题导致出现的程序错误，也通常被称为bug，错误主要有如下几种：
+
+    \begin{itemize}
+        \item 语法错误 (Syntax error)，这种错误最容易发现，因为语法错误时程序无法运行
+        \item 逻辑错误 (logic error)，这种错误非常常见也是很容易犯的，可能会导致意料之外的结果但不一定会报出错误并导致程序终止，例如在设置条件时小于等于5设置为小于5
+        \item 运行时错误 (runtime error)，这种错误也非常常见，例如访问只有5个元素的数组的第6个元素，或需要字符串时传入数字，这种错误可以通过测试来避免
+    \end{itemize}
+
+    错误处理的主要目的即是在合适的地方报出(raise)错误，并决定处理这种错误，如执行特定的代码，还是终止程序并报出错误信息以提醒用户，主要解决的错误类型为 runtime error。
+   
+    在Python中，error也常被称为Exception。
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Python中的Error}
+
+\begin{codebox}{Python}{示例错误}
+>>> 10 * (1/0)
+Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+ZeroDivisionError: division by zero
+>>> 4 + spam*3
+Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+NameError: name 'spam' is not defined
+>>> '2' + 2
+Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+TypeError: can only concatenate str (not "int") to str
+\end{codebox}
+
+\begin{itemize}
+    \item \mintinline{python}{traceback}的主要目的是逐层从外到里给出错误信息的报出的地方
+    \item \mintinline{python}{NameError, TypeError}等为Error的类型，在Python中，Error主要通过类和对象来实现，也可以通过继承基础的错误类型来实现自己的Error类型。
+    \item 冒号后面的内容为错误信息，主要用于提示用户
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{raise error: 报出错误}
+
+    \begin{itemize}
+        \item 在Python中最基础的错误类型为\mintinline{python}{BaseException}和\mintinline{python}{Exception}，其他的错误类型如\mintinline{Python}{ValueError}, \mintinline{python}{SyntaxError}等继承了这两类实现的。
+        \item 报出错误首先需要一个错误类型的对象，然后使用\mintinline{python}{raise}函数报出，在不做任何处理的情况下，会中断程序。
+        \item 在初始化对象时，第一个参数为报错信息。
+    \end{itemize}
+
+\begin{codebox}{Python}{示例代码}
+raise(ValueError("this is a ValueError."))
+raise(Exception("this is a normal Exception."))
+\end{codebox}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{处理错误}
+
+可以通过\mintinline{python}{try ... except ...}语法来捕获(capture)并处理错误。
+
+\begin{codebox}{Python}{示例代码}
+while True:
+    try:
+        x = int(input("Please enter a number: "))
+        break
+    except xxx1:
+        # some code
+    except (xxx2, xxx3):
+        # some code
+    finally:
+        # some code
+    else:
+        # some code\end{codebox}
+\begin{outline}
+    \1 当遇到\mintinline{python}{try}时，会首先执行\mintinline{python}{try}后面紧跟的代码块
+    \1 若有错误报出，则根据错误的类型进行匹配并执行对应代码块中的代码，例如若错误类型为\mintinline{python}{ValueError}，则执行\mintinline{Python}{print}语句。
+    \2 可以有多个\mintinline{python}{except ExceptionType:}分句。
+    \2 若匹配不到，则执行\mintinline{python}{finally}语句(可选)，否则报出错误，终止程序
+    \1 若没有错误，则执行\mintinline{python}{else}后面的代码(如果有的话)。
+\end{outline}
+
+
+\end{frame}
+
+
+
+
+
+\end{document}
